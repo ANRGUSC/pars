@@ -33,6 +33,9 @@ from functions.inprocessing import (
     create_c_sanitized
 )
 from models.attention_gru import AttentionGRU
+from models.transformer import AttentionTransformer
+from models.rnn import AttentionRNN
+
 
 # Configuration and warnings
 warnings.filterwarnings('ignore')
@@ -293,8 +296,29 @@ valid_loader = torch.utils.data.DataLoader(X_val_timeseries, batch_size=batch_si
 
 """
 Model Training
-"""
+
+# For AttentionGRU use:
 model = AttentionGRU(input_dim = input_dim, embed_size = embed_size, hidden_dim = hidden_dim, output_dim = output_dim)
+
+# For Transformer use:
+# Correct instantiation with all required parameters
+num_heads = 8  # The number of heads in the multi-head attention models
+num_layers = 6  # The number of sub-encoder-layers in the encoder
+model = AttentionTransformer(input_dim=input_dim, embed_size=embed_size, num_heads=num_heads,
+                             hidden_dim=hidden_dim, output_dim=output_dim, num_layers=num_layers)
+
+
+
+# RNN                             
+
+model = AttentionRNN(input_dim=input_dim, embed_size=embed_size, hidden_dim=hidden_dim, output_dim=output_dim)
+ 
+"""
+
+
+model = AttentionGRU(input_dim = input_dim, embed_size = embed_size, hidden_dim = hidden_dim, output_dim = output_dim)
+
+
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 #scheduler = StepLR(optimizer, step_size=1, gamma=0.0001)  # Reduces the learning rate by a factor of 0.1 every 5 epochs
